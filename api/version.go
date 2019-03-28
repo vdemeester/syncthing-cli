@@ -1,8 +1,6 @@
 package api
 
 import (
-	"fmt"
-
 	"git.dtluna.net/dtluna/syncthing-cli/config"
 )
 
@@ -22,16 +20,15 @@ type VersionInfo struct {
 }
 
 func Version(cfg *config.Config) (*VersionInfo, error) {
-	req := NewClient(cfg).
-		Request().
-		Path(VersionPath)
+	req := NewClient(cfg).Request().Path(VersionPath)
 	resp, err := req.Send()
 	if err != nil {
 		return nil, err
 	}
 
-	if !resp.Ok {
-		return nil, fmt.Errorf("%v %v", resp.StatusCode, resp.String())
+	err = checkResponseOK(resp)
+	if err != nil {
+		return nil, err
 	}
 
 	info := new(VersionInfo)

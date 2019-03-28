@@ -61,6 +61,8 @@ func main() {
 
 	version := app.Command("version", "Show the current Syncthing version information.").Alias("v")
 
+	configCmd := app.Command("config", "Show the current configuration.").Alias("c")
+
 	commandName := kingpin.MustParse(app.Parse(os.Args[1:]))
 
 	cfg, err := config.Parse(*configPath)
@@ -71,6 +73,8 @@ func main() {
 
 	err = func() error {
 		switch commandName {
+		case configCmd.FullCommand():
+			return commands.Config(cfg)
 		case version.FullCommand():
 			return commands.Version(cfg)
 		}

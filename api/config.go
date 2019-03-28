@@ -1,0 +1,302 @@
+package api
+
+import (
+	"fmt"
+	"strings"
+
+	"git.dtluna.net/dtluna/syncthing-cli/config"
+)
+
+const ConfigPath = "/rest/system/config"
+
+func indent(s string, depth int) string {
+	sep := strings.Repeat(" ", depth)
+	return "\n" + sep + strings.Join(
+		strings.Split(s, "\n"),
+		"\n"+sep,
+	)
+}
+
+func indentStringSlice(slice []string, depth int) string {
+	sep := strings.Repeat(" ", depth)
+	if len(slice) == 0 {
+		return "None"
+	}
+
+	lines := []string{}
+
+	for i, el := range slice {
+		lines = append(lines, sep+fmt.Sprintf("%v. %s", i+1, el))
+	}
+	return "\n" + strings.Join(lines, "\n")
+}
+
+type FolderDevice struct {
+	DeviceID string
+}
+
+func (fd FolderDevice) String() string {
+	return fmt.Sprint("ID: ", fd.DeviceID)
+}
+
+type VersioningInfo struct {
+	Type   string
+	Params map[string]interface{}
+}
+
+func (vi VersioningInfo) String() string {
+	return fmt.Sprintf(
+		`Type: %v
+Params: %v`,
+		vi.Type,
+		vi.Params,
+	)
+}
+
+type Folder struct {
+	ID                    string
+	Label                 string
+	Path                  string
+	Type                  string
+	Devices               []FolderDevice
+	RescanIntervalS       int
+	IgnorePerms           bool
+	AutoNormalize         bool
+	MinDiskFreePct        int
+	Versioning            VersioningInfo
+	Copiers               int
+	Pullers               int
+	Hashers               int
+	Order                 string
+	IgnoreDelete          bool
+	ScanProgressIntervalS int
+	PullerSleepS          int
+	PullerPauseS          int
+	MaxConflicts          int
+	DisableSparseFiles    bool
+	DisableTempIndexes    bool
+	Fsync                 bool
+	Invalid               string
+}
+
+func (f Folder) String() string {
+	return fmt.Sprintf(
+		`ID: %v
+Label: %v
+Path: %v
+Type: %v
+Devices: %v
+Versioning: %v`,
+		f.ID,
+		f.Label,
+		f.Path,
+		f.Type,
+		f.Devices,
+		f.Versioning,
+	)
+}
+
+type Device struct {
+	DeviceID    string
+	Name        string
+	Addresses   []string
+	Compression string
+	CertName    string
+	Introducer  bool
+}
+
+func (d Device) String() string {
+	return fmt.Sprintf(
+		`ID: %v
+Name: %v
+Addresses: %v
+Compression: %v
+Certificate name: %v
+Introducer: %v`,
+		d.DeviceID,
+		d.Name,
+		d.Addresses,
+		d.Compression,
+		d.CertName,
+		d.Introducer,
+	)
+}
+
+type GUIConfig struct {
+	Enabled             bool
+	Address             string
+	User                string
+	UseTLS              bool
+	InsecureAdminAccess bool
+	Theme               string
+}
+
+func (gc GUIConfig) String() string {
+	return fmt.Sprintf(
+		`Enabled: %v
+Address: %v
+User: %v
+TLS used: %v
+Insecure admin access: %v
+Theme: %v`,
+		gc.Enabled,
+		gc.Address,
+		gc.User,
+		gc.UseTLS,
+		gc.InsecureAdminAccess,
+		gc.Theme,
+	)
+}
+
+type Options struct {
+	ListenAddresses                     []string
+	GlobalAnnounceServers               []string
+	GlobalAnnounceEnabled               bool
+	LocalAnnounceEnabled                bool
+	LocalAnnouncePort                   int
+	LocalAnnounceMCAddr                 string
+	MaxSendKbps                         int
+	MaxRecvKbps                         int
+	ReconnectionIntervalS               int
+	RelaysEnabled                       bool
+	RelayReconnectIntervalM             int
+	StartBrowser                        bool
+	NatEnabled                          bool
+	NatLeaseMinutes                     int
+	NatRenewalMinutes                   int
+	NatTimeoutSeconds                   int
+	UrAccepted                          int
+	UrUniqueID                          string
+	UrURL                               string
+	UrPostInsecurely                    bool
+	UrInitialDelayS                     int
+	RestartOnWakeup                     bool
+	AutoUpgradeIntervalH                int
+	KeepTemporariesH                    int
+	CacheIgnoredFiles                   bool
+	ProgressUpdateIntervalS             int
+	LimitBandwidthInLan                 bool
+	MinHomeDiskFreePct                  int
+	ReleasesURL                         string
+	AlwaysLocalNets                     []string
+	OverwriteRemoteDeviceNamesOnConnect bool
+	TempIndexMinBlocks                  int
+}
+
+func (o Options) String() string {
+	return fmt.Sprintf(
+		`Listen addresses: %v
+Global announce servers: %v
+Global announce enabled: %v
+Local announce enabled: %v
+Local announce port: %v
+Local announce MAC address: %v
+Max sending speed: %v kbit/s
+Max receiving speed: %v kbit/s
+Reconnection interval: %v s
+Relays enabled: %v
+Relay reconnect interval: %v min
+Start browser: %v
+NAT enabled: %v
+NAT lease: %v min
+NAT renewal: %v min
+NAT timeout: %v s
+Usage reports accepted: %v
+Usage report unique ID: %v
+Usage report URL: %v
+Post usage reports insecurely: %v
+Usage report initial delay: %v s
+Restart on wakeup: %v
+Auto upgrade interval: %v h
+Keep temporary failed transfers: %v h
+Cache ignored files: %v
+Progress update interval: %v s
+Limit bandwidth in LAN: %v
+Minimal home disk free space: %v%%
+Releases URL: %v
+Always local networks: %v
+Overwrite remote device names on connect: %v
+`,
+		indentStringSlice(o.ListenAddresses, 2),
+		indentStringSlice(o.GlobalAnnounceServers, 2),
+		o.GlobalAnnounceEnabled,
+		o.LocalAnnounceEnabled,
+		o.LocalAnnouncePort,
+		o.LocalAnnounceMCAddr,
+		o.MaxSendKbps,
+		o.MaxRecvKbps,
+		o.ReconnectionIntervalS,
+		o.RelaysEnabled,
+		o.RelayReconnectIntervalM,
+		o.StartBrowser,
+		o.NatEnabled,
+		o.NatLeaseMinutes,
+		o.NatRenewalMinutes,
+		o.NatTimeoutSeconds,
+		o.UrAccepted,
+		o.UrUniqueID,
+		o.UrURL,
+		o.UrPostInsecurely,
+		o.UrInitialDelayS,
+		o.RestartOnWakeup,
+		o.AutoUpgradeIntervalH,
+		o.KeepTemporariesH,
+		o.CacheIgnoredFiles,
+		o.ProgressUpdateIntervalS,
+		o.LimitBandwidthInLan,
+		o.MinHomeDiskFreePct,
+		o.ReleasesURL,
+		indentStringSlice(o.AlwaysLocalNets, 2),
+		o.OverwriteRemoteDeviceNamesOnConnect,
+	)
+}
+
+type STConfig struct {
+	Version        int
+	Folders        []Folder
+	Devices        []Device
+	GUI            GUIConfig
+	Options        Options
+	IgnoredDevices []string
+	IgnoredFolders []string
+}
+
+func (c STConfig) String() string {
+	return fmt.Sprintf(
+		`Version: %v
+
+GUI: %v
+
+Options: %v
+
+Ignored devices: %v
+
+Ignored folders: %v`,
+		c.Version,
+		indent(c.GUI.String(), 2),
+		indent(c.Options.String(), 2),
+		indentStringSlice(c.IgnoredDevices, 2),
+		indentStringSlice(c.IgnoredFolders, 2),
+	)
+}
+
+func GetConfig(cfg *config.Config) (*STConfig, error) {
+	req := NewClient(cfg).Request().Path(ConfigPath)
+	resp, err := req.Send()
+	if err != nil {
+		return nil, err
+	}
+
+	err = checkResponseOK(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	stc := new(STConfig)
+	err = resp.JSON(stc)
+	if err != nil {
+		return nil, err
+	}
+
+	return stc, nil
+}
