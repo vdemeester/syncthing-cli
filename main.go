@@ -65,6 +65,7 @@ func main() {
 
 	device := app.Command("device", "Work with devices.").Alias("d").Alias("dev")
 	deviceList := device.Command("list", "List devices.").Alias("l").Alias("ls")
+	deviceStats := device.Command("stats", "Show device stats.").Alias("s").Alias("st")
 
 	commandName := kingpin.MustParse(app.Parse(os.Args[1:]))
 
@@ -82,6 +83,8 @@ func main() {
 			return commands.Version(cfg)
 		case deviceList.FullCommand():
 			return commands.DeviceList(cfg)
+		case deviceStats.FullCommand():
+			return commands.DeviceStats(cfg)
 		}
 		return nil
 	}()

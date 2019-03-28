@@ -18,3 +18,14 @@ func DeviceList(cfg *config.Config) error {
 	fmt.Println(api.IndentDevices(stconfig.Devices, 2))
 	return nil
 }
+
+func DeviceStats(cfg *config.Config) error {
+	stats, err := api.GetDeviceStats(cfg)
+	if err != nil {
+		return errwrap.Wrapf("getting device stats: {{err}}", err)
+	}
+	for name, devStats := range *stats {
+		fmt.Printf("%v:\n  Last seen: %v\n", name, devStats.LastSeen)
+	}
+	return nil
+}
