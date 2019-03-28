@@ -115,11 +115,26 @@ Certificate name: %v
 Introducer: %v`,
 		d.DeviceID,
 		d.Name,
-		d.Addresses,
+		indentStringSlice(d.Addresses, 2),
 		d.Compression,
 		d.CertName,
 		d.Introducer,
 	)
+}
+
+func IndentDevices(ds []Device, depth int) string {
+	sep := strings.Repeat(" ", depth)
+	if len(ds) == 0 {
+		return "None"
+	}
+
+	lines := []string{}
+
+	for i, el := range ds {
+		line := strings.ReplaceAll(fmt.Sprintf("%v. %s", i+1, el), "\n", "\n"+sep)
+		lines = append(lines, line)
+	}
+	return "\n" + strings.Join(lines, "\n")
 }
 
 type GUIConfig struct {

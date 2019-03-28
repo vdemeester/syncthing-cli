@@ -61,7 +61,10 @@ func main() {
 
 	version := app.Command("version", "Show the current Syncthing version information.").Alias("v")
 
-	configCmd := app.Command("config", "Show the current configuration.").Alias("c")
+	configCmd := app.Command("config", "Show the current configuration.").Alias("c").Alias("conf")
+
+	device := app.Command("device", "Work with devices.").Alias("d").Alias("dev")
+	deviceList := device.Command("list", "List devices.").Alias("l").Alias("ls")
 
 	commandName := kingpin.MustParse(app.Parse(os.Args[1:]))
 
@@ -77,6 +80,8 @@ func main() {
 			return commands.Config(cfg)
 		case version.FullCommand():
 			return commands.Version(cfg)
+		case deviceList.FullCommand():
+			return commands.DeviceList(cfg)
 		}
 		return nil
 	}()
