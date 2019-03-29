@@ -67,6 +67,9 @@ func main() {
 	deviceList := device.Command("list", "List devices.").Alias("l").Alias("ls")
 	deviceStats := device.Command("stats", "Show device stats.").Alias("s").Alias("st")
 
+	folder := app.Command("folder", "Work with folders.").Alias("f").Alias("fl").Alias("fold")
+	folderList := folder.Command("list", "List folders.").Alias("l").Alias("ls")
+
 	commandName := kingpin.MustParse(app.Parse(os.Args[1:]))
 
 	cfg, err := config.Parse(*configPath)
@@ -85,6 +88,8 @@ func main() {
 			return commands.DeviceList(cfg)
 		case deviceStats.FullCommand():
 			return commands.DeviceStats(cfg)
+		case folderList.FullCommand():
+			return commands.FolderList(cfg)
 		}
 		return nil
 	}()

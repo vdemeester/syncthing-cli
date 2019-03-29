@@ -5,6 +5,7 @@ import (
 
 	"git.dtluna.net/dtluna/syncthing-cli/api"
 	"git.dtluna.net/dtluna/syncthing-cli/config"
+	"git.dtluna.net/dtluna/syncthing-cli/format"
 
 	"github.com/hashicorp/errwrap"
 )
@@ -15,7 +16,7 @@ func DeviceList(cfg *config.Config) error {
 		return errwrap.Wrapf("getting config: {{err}}", err)
 	}
 
-	fmt.Println(api.IndentDevices(stconfig.Devices, 2))
+	fmt.Println(format.IndentDevices(stconfig.Devices, 2))
 	return nil
 }
 

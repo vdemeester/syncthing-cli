@@ -18,11 +18,11 @@ func indent(s string, depth int) string {
 }
 
 func indentStringSlice(slice []string, depth int) string {
-	sep := strings.Repeat(" ", depth)
 	if len(slice) == 0 {
 		return "None"
 	}
 
+	sep := strings.Repeat(" ", depth)
 	lines := []string{}
 
 	for i, el := range slice {
@@ -39,9 +39,38 @@ func (fd FolderDevice) String() string {
 	return fmt.Sprint("ID: ", fd.DeviceID)
 }
 
+func indentFolderDevices(fds []FolderDevice, depth int) string {
+	if len(fds) == 0 {
+		return "None"
+	}
+
+	sep := strings.Repeat(" ", depth)
+	lines := []string{}
+
+	for i, el := range fds {
+		line := strings.ReplaceAll(fmt.Sprintf("%v. %s", i+1, el), "\n", "\n"+sep)
+		lines = append(lines, line)
+	}
+	return "\n" + strings.Join(lines, "\n")
+}
+
+type VersioningInfoParams map[string]interface{}
+
+func (vip VersioningInfoParams) String() string {
+	if len(vip) == 0 {
+		return "None"
+	}
+
+	slice := []string{}
+	for key, value := range vip {
+		slice = append(slice, fmt.Sprintf("%v: %v", key, value))
+	}
+	return strings.Join(slice, "\n")
+}
+
 type VersioningInfo struct {
 	Type   string
-	Params map[string]interface{}
+	Params VersioningInfoParams
 }
 
 func (vi VersioningInfo) String() string {
@@ -49,7 +78,7 @@ func (vi VersioningInfo) String() string {
 		`Type: %v
 Params: %v`,
 		vi.Type,
-		vi.Params,
+		indent(vi.Params.String(), 2),
 	)
 }
 
@@ -80,6 +109,13 @@ type Folder struct {
 }
 
 func (f Folder) String() string {
+	var viString string
+	if f.Versioning.Type == "" {
+		viString = "None"
+	} else {
+		viString = indent(f.Versioning.String(), 2)
+	}
+
 	return fmt.Sprintf(
 		`ID: %v
 Label: %v
@@ -91,8 +127,8 @@ Versioning: %v`,
 		f.Label,
 		f.Path,
 		f.Type,
-		f.Devices,
-		f.Versioning,
+		indentFolderDevices(f.Devices, 2),
+		viString,
 	)
 }
 
@@ -120,21 +156,6 @@ Introducer: %v`,
 		d.CertName,
 		d.Introducer,
 	)
-}
-
-func IndentDevices(ds []Device, depth int) string {
-	sep := strings.Repeat(" ", depth)
-	if len(ds) == 0 {
-		return "None"
-	}
-
-	lines := []string{}
-
-	for i, el := range ds {
-		line := strings.ReplaceAll(fmt.Sprintf("%v. %s", i+1, el), "\n", "\n"+sep)
-		lines = append(lines, line)
-	}
-	return "\n" + strings.Join(lines, "\n")
 }
 
 type GUIConfig struct {
