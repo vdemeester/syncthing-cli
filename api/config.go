@@ -9,7 +9,7 @@ import (
 
 const ConfigPath = "/rest/system/config"
 
-func indent(s string, depth int) string {
+func Indent(s string, depth int) string {
 	sep := strings.Repeat(" ", depth)
 	return "\n" + sep + strings.Join(
 		strings.Split(s, "\n"),
@@ -78,7 +78,7 @@ func (vi VersioningInfo) String() string {
 		`Type: %v
 Params: %v`,
 		vi.Type,
-		indent(vi.Params.String(), 2),
+		Indent(vi.Params.String(), 2),
 	)
 }
 
@@ -113,7 +113,7 @@ func (f Folder) String() string {
 	if f.Versioning.Type == "" {
 		viString = "None"
 	} else {
-		viString = indent(f.Versioning.String(), 2)
+		viString = Indent(f.Versioning.String(), 2)
 	}
 
 	return fmt.Sprintf(
@@ -309,8 +309,8 @@ Ignored devices: %v
 
 Ignored folders: %v`,
 		c.Version,
-		indent(c.GUI.String(), 2),
-		indent(c.Options.String(), 2),
+		Indent(c.GUI.String(), 2),
+		Indent(c.Options.String(), 2),
 		indentStringSlice(c.IgnoredDevices, 2),
 		indentStringSlice(c.IgnoredFolders, 2),
 	)

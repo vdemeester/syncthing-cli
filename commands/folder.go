@@ -19,3 +19,15 @@ func FolderList(cfg *config.Config) error {
 	fmt.Println(format.IndentFolders(stconfig.Folders, 2))
 	return nil
 }
+
+func FolderStats(cfg *config.Config) error {
+	stats, err := api.GetFolderStats(cfg)
+	if err != nil {
+		return errwrap.Wrapf("getting folder stats: {{err}}", err)
+	}
+
+	for name, folderStats := range *stats {
+		fmt.Printf("%v: %v\n", name, api.Indent(folderStats.String(), 2))
+	}
+	return nil
+}

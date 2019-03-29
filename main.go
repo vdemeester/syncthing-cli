@@ -69,6 +69,7 @@ func main() {
 
 	folder := app.Command("folder", "Work with folders.").Alias("f").Alias("fl").Alias("fold")
 	folderList := folder.Command("list", "List folders.").Alias("l").Alias("ls")
+	folderStats := folder.Command("stats", "Show folder stats.").Alias("s").Alias("st")
 
 	commandName := kingpin.MustParse(app.Parse(os.Args[1:]))
 
@@ -90,6 +91,8 @@ func main() {
 			return commands.DeviceStats(cfg)
 		case folderList.FullCommand():
 			return commands.FolderList(cfg)
+		case folderStats.FullCommand():
+			return commands.FolderStats(cfg)
 		}
 		return nil
 	}()
