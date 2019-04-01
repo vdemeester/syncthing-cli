@@ -7,8 +7,11 @@ import (
 )
 
 const (
-	DeviceStatsPath = "/rest/stats/device"
-	FolderStatsPath = "/rest/stats/folder"
+	deviceStatsPath = "/rest/stats/device"
+	folderStatsPath = "/rest/stats/folder"
+
+	getDeviceStatsError = "getting device stats: {{err}}"
+	getFolderStatsError = "getting folder stats: {{err}}"
 )
 
 type DeviceStats struct {
@@ -16,21 +19,21 @@ type DeviceStats struct {
 }
 
 func GetDeviceStats(cfg *config.Config) (*map[string]DeviceStats, error) {
-	req := NewClient(cfg).Request().Path(DeviceStatsPath)
+	req := newClient(cfg).Request().Path(deviceStatsPath)
 	resp, err := req.Send()
 	if err != nil {
-		return nil, err
+		return nil, wrapError(err, getDeviceStatsError)
 	}
 
 	err = checkResponseOK(resp)
 	if err != nil {
-		return nil, err
+		return nil, wrapError(err, getDeviceStatsError)
 	}
 
 	stats := new(map[string]DeviceStats)
 	err = resp.JSON(stats)
 	if err != nil {
-		return nil, err
+		return nil, wrapError(err, getDeviceStatsError)
 	}
 
 	return stats, nil
@@ -65,21 +68,21 @@ Last file: %v`,
 }
 
 func GetFolderStats(cfg *config.Config) (*map[string]FolderStats, error) {
-	req := NewClient(cfg).Request().Path(FolderStatsPath)
+	req := newClient(cfg).Request().Path(folderStatsPath)
 	resp, err := req.Send()
 	if err != nil {
-		return nil, err
+		return nil, wrapError(err, getFolderStatsError)
 	}
 
 	err = checkResponseOK(resp)
 	if err != nil {
-		return nil, err
+		return nil, wrapError(err, getFolderStatsError)
 	}
 
 	stats := new(map[string]FolderStats)
 	err = resp.JSON(stats)
 	if err != nil {
-		return nil, err
+		return nil, wrapError(err, getFolderStatsError)
 	}
 
 	return stats, nil

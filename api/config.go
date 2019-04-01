@@ -7,7 +7,11 @@ import (
 	"git.dtluna.net/dtluna/syncthing-cli/config"
 )
 
-const ConfigPath = "/rest/system/config"
+const (
+	configPath = "/rest/system/config"
+
+	getConfigError = "getting config: {{err}}"
+)
 
 func Indent(s string, depth int) string {
 	sep := strings.Repeat(" ", depth)
@@ -317,21 +321,21 @@ Ignored folders: %v`,
 }
 
 func GetConfig(cfg *config.Config) (*STConfig, error) {
-	req := NewClient(cfg).Request().Path(ConfigPath)
+	req := newClient(cfg).Request().Path(configPath)
 	resp, err := req.Send()
 	if err != nil {
-		return nil, err
+		return nil, wrapError(err, getConfigError)
 	}
 
 	err = checkResponseOK(resp)
 	if err != nil {
-		return nil, err
+		return nil, wrapError(err, getConfigError)
 	}
 
 	stc := new(STConfig)
 	err = resp.JSON(stc)
 	if err != nil {
-		return nil, err
+		return nil, wrapError(err, getConfigError)
 	}
 
 	return stc, nil

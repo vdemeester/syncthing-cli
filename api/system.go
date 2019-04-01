@@ -7,80 +7,80 @@ import (
 )
 
 const (
-	RestartPath  = "/rest/system/restart"
-	ShutdownPath = "/rest/system/shutdown"
-	PausePath    = "/rest/system/pause"
-	ResumePath   = "/rest/system/resume"
+	restartPath  = "/rest/system/restart"
+	shutdownPath = "/rest/system/shutdown"
+	pausePath    = "/rest/system/pause"
+	resumePath   = "/rest/system/resume"
 
-	RestartError  = "requesting a restart: {{err}}"
-	PauseError    = "requesting to pause a device: {{err}}"
-	ShutdownError = "requesting a shutdown: {{err}}"
-	ResumeError   = "requesting to resume a device: {{err}}"
+	restartError  = "requesting a restart: {{err}}"
+	pauseError    = "requesting to pause a device: {{err}}"
+	shutdownError = "requesting a shutdown: {{err}}"
+	resumeError   = "requesting to resume a device: {{err}}"
 )
 
 func Restart(cfg *config.Config) error {
-	req := NewClient(cfg).Request().Path(RestartPath).Method(http.MethodPost)
+	req := newClient(cfg).Request().Path(restartPath).Method(http.MethodPost)
 	resp, err := req.Send()
 	if err != nil {
-		return wrapError(err, RestartError)
+		return wrapError(err, restartError)
 	}
 
 	err = checkResponseOK(resp)
 	if err != nil {
-		return wrapError(err, RestartError)
+		return wrapError(err, restartError)
 	}
 
 	return nil
 }
 
 func Shutdown(cfg *config.Config) error {
-	req := NewClient(cfg).Request().Path(ShutdownPath).Method(http.MethodPost)
+	req := newClient(cfg).Request().Path(shutdownPath).Method(http.MethodPost)
 	resp, err := req.Send()
 	if err != nil {
-		return wrapError(err, ShutdownError)
+		return wrapError(err, shutdownError)
 	}
 
 	err = checkResponseOK(resp)
 	if err != nil {
-		return wrapError(err, ShutdownError)
+		return wrapError(err, shutdownError)
 	}
 
 	return nil
 }
 
 func Pause(cfg *config.Config, device string) error {
-	req := NewClient(cfg).Request().Path(PausePath).Method(http.MethodPost)
+	req := newClient(cfg).Request().Path(pausePath).Method(http.MethodPost)
 	if device != "" {
 		req = req.AddQuery("device", device)
 	}
 
 	resp, err := req.Send()
 	if err != nil {
-		return wrapError(err, PauseError)
+		return wrapError(err, pauseError)
 	}
 
 	err = checkResponseOK(resp)
 	if err != nil {
-		return wrapError(err, PauseError)
+		return wrapError(err, pauseError)
 	}
 
 	return nil
 }
 
 func Resume(cfg *config.Config, device string) error {
-	req := NewClient(cfg).Request().Path(ResumePath).Method(http.MethodPost)
+	req := newClient(cfg).Request().Path(resumePath).Method(http.MethodPost)
 	if device != "" {
 		req = req.AddQuery("device", device)
 	}
 
 	resp, err := req.Send()
 	if err != nil {
-		return wrapError(err, ResumeError)
+		return wrapError(err, resumeError)
 	}
 
 	err = checkResponseOK(resp)
 	if err != nil {
-		return wrapError(err, ResumeError)
+		return wrapError(err, resumeError)
 	}
 
 	return nil

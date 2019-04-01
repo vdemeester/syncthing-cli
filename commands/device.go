@@ -6,14 +6,12 @@ import (
 	"git.dtluna.net/dtluna/syncthing-cli/api"
 	"git.dtluna.net/dtluna/syncthing-cli/config"
 	"git.dtluna.net/dtluna/syncthing-cli/format"
-
-	"github.com/hashicorp/errwrap"
 )
 
 func DeviceList(cfg *config.Config) error {
 	stconfig, err := api.GetConfig(cfg)
 	if err != nil {
-		return errwrap.Wrapf("getting config: {{err}}", err)
+		return err
 	}
 
 	fmt.Println(format.IndentDevices(stconfig.Devices, 2))
@@ -23,7 +21,7 @@ func DeviceList(cfg *config.Config) error {
 func DeviceStats(cfg *config.Config) error {
 	stats, err := api.GetDeviceStats(cfg)
 	if err != nil {
-		return errwrap.Wrapf("getting device stats: {{err}}", err)
+		return err
 	}
 	for name, devStats := range *stats {
 		fmt.Printf("%v:\n  Last seen: %v\n", name, devStats.LastSeen)

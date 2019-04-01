@@ -5,7 +5,9 @@ import (
 )
 
 const (
-	VersionPath = "/rest/system/version"
+	versionPath = "/rest/system/version"
+
+	getVersionError = "requesting version: {{err}}"
 )
 
 type VersionInfo struct {
@@ -20,21 +22,21 @@ type VersionInfo struct {
 }
 
 func Version(cfg *config.Config) (*VersionInfo, error) {
-	req := NewClient(cfg).Request().Path(VersionPath)
+	req := newClient(cfg).Request().Path(versionPath)
 	resp, err := req.Send()
 	if err != nil {
-		return nil, err
+		return nil, wrapError(err, getVersionError)
 	}
 
 	err = checkResponseOK(resp)
 	if err != nil {
-		return nil, err
+		return nil, wrapError(err, getVersionError)
 	}
 
 	info := new(VersionInfo)
 	err = resp.JSON(info)
 	if err != nil {
-		return nil, err
+		return nil, wrapError(err, getVersionError)
 	}
 
 	return info, nil
