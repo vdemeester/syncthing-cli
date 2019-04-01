@@ -10,10 +10,12 @@ const (
 	RestartPath  = "/rest/system/restart"
 	ShutdownPath = "/rest/system/shutdown"
 	PausePath    = "/rest/system/pause"
+	ResumePath   = "/rest/system/resume"
 
 	RestartError  = "requesting a restart: {{err}}"
-	PauseError    = "requesting a pause: {{err}}"
+	PauseError    = "requesting to pause a device: {{err}}"
 	ShutdownError = "requesting a shutdown: {{err}}"
+	ResumeError   = "requesting to resume a device: {{err}}"
 )
 
 func Restart(cfg *config.Config) error {
@@ -60,6 +62,25 @@ func Pause(cfg *config.Config, device string) error {
 	err = checkResponseOK(resp)
 	if err != nil {
 		return wrapError(err, PauseError)
+	}
+
+	return nil
+}
+
+func Resume(cfg *config.Config, device string) error {
+	req := NewClient(cfg).Request().Path(ResumePath).Method(http.MethodPost)
+	if device != "" {
+		req = req.AddQuery("device", device)
+	}
+
+	resp, err := req.Send()
+	if err != nil {
+		return wrapError(err, ResumeError)
+	}
+
+	err = checkResponseOK(resp)
+	if err != nil {
+		return wrapError(err, ResumeError)
 	}
 
 	return nil

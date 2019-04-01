@@ -26,3 +26,17 @@ func Pause(cfg *config.Config, devices []string) error {
 	}
 	return nil
 }
+
+func Resume(cfg *config.Config, devices []string) error {
+	if len(devices) == 0 {
+		return api.Resume(cfg, "")
+	}
+
+	for _, device := range devices {
+		err := api.Resume(cfg, device)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
