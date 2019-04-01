@@ -74,6 +74,10 @@ func main() {
 	restart := app.Command("restart", "Restart the Syncthing daemon.")
 	shutdown := app.Command("shutdown", "Shutdown the Syncthing daemon.")
 
+	pause := app.Command("pause", "Pause the given device or all devices.").Alias("p")
+	pauseDevices := pause.Arg("devices", "Devices to pause. If non specified all devices are paused.").
+		Strings()
+
 	commandName := kingpin.MustParse(app.Parse(os.Args[1:]))
 
 	cfg, err := config.Parse(*configPath)
@@ -100,6 +104,8 @@ func main() {
 			return commands.Restart(cfg)
 		case shutdown.FullCommand():
 			return commands.Shutdown(cfg)
+		case pause.FullCommand():
+			return commands.Pause(cfg, *pauseDevices)
 		}
 		return nil
 	}()

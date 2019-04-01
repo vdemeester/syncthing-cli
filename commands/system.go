@@ -3,22 +3,26 @@ package commands
 import (
 	"git.dtluna.net/dtluna/syncthing-cli/api"
 	"git.dtluna.net/dtluna/syncthing-cli/config"
-
-	"github.com/hashicorp/errwrap"
 )
 
 func Restart(cfg *config.Config) error {
-	err := api.Restart(cfg)
-	if err != nil {
-		return errwrap.Wrapf("requesting a restart: {{err}}", err)
-	}
-	return nil
+	return api.Restart(cfg)
 }
 
 func Shutdown(cfg *config.Config) error {
-	err := api.Shutdown(cfg)
-	if err != nil {
-		return errwrap.Wrapf("requesting a shutdown: {{err}}", err)
+	return api.Shutdown(cfg)
+}
+
+func Pause(cfg *config.Config, devices []string) error {
+	if len(devices) == 0 {
+		return api.Pause(cfg, "")
+	}
+
+	for _, device := range devices {
+		err := api.Pause(cfg, device)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
