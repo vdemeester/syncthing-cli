@@ -72,6 +72,7 @@ func main() {
 	folderStats := folder.Command("stats", "Show folder stats.").Alias("s").Alias("st")
 
 	restart := app.Command("restart", "Restart the Syncthing daemon.")
+	shutdown := app.Command("shutdown", "Shutdown the Syncthing daemon.")
 
 	commandName := kingpin.MustParse(app.Parse(os.Args[1:]))
 
@@ -97,6 +98,8 @@ func main() {
 			return commands.FolderStats(cfg)
 		case restart.FullCommand():
 			return commands.Restart(cfg)
+		case shutdown.FullCommand():
+			return commands.Shutdown(cfg)
 		}
 		return nil
 	}()

@@ -14,3 +14,11 @@ func Restart(cfg *config.Config) error {
 	}
 	return nil
 }
+
+func Shutdown(cfg *config.Config) error {
+	err := api.Shutdown(cfg)
+	if err != nil {
+		return errwrap.Wrapf("requesting a shutdown: {{err}}", err)
+	}
+	return nil
+}
