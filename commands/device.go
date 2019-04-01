@@ -28,3 +28,34 @@ func DeviceStats(cfg *config.Config) error {
 	}
 	return nil
 }
+
+func DeviceAdd(
+	cfg *config.Config,
+	deviceID, deviceName, compression, certName string,
+	addresses []string,
+	introducer bool,
+) error {
+	stconfig, err := api.GetConfig(cfg)
+	if err != nil {
+		return err
+	}
+
+	newDevice := api.Device{
+		DeviceID:    deviceID,
+		Name:        deviceName,
+		Addresses:   addresses,
+		Compression: compression,
+		CertName:    certName,
+		Introducer:  introducer,
+	}
+
+	stconfig.Devices = append(stconfig.Devices, newDevice)
+
+	stconfig, err = api.SetConfig(cfg, stconfig)
+	if err != nil {
+		return err
+	}
+	fmt.Println(stconfig)
+
+	return nil
+}

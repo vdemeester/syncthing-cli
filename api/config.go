@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 
 	"git.dtluna.net/dtluna/syncthing-cli/config"
@@ -11,6 +12,7 @@ const (
 	configPath = "/rest/system/config"
 
 	getConfigError = "getting config: {{err}}"
+	setConfigError = "setting config: {{err}}"
 )
 
 func Indent(s string, depth int) string {
@@ -169,6 +171,7 @@ type GUIConfig struct {
 	UseTLS              bool
 	InsecureAdminAccess bool
 	Theme               string
+	APIKey              string
 }
 
 func (gc GUIConfig) String() string {
@@ -336,6 +339,28 @@ func GetConfig(cfg *config.Config) (*STConfig, error) {
 	err = resp.JSON(stc)
 	if err != nil {
 		return nil, wrapError(err, getConfigError)
+	}
+
+	return stc, nil
+}
+
+func SetConfig(cfg *config.Config, stconfig *STConfig) (*STConfig, error) {
+	req := newClient(cfg).Request().Path(configPath).
+		Method(http.MethodPost).JSON(stconfig)
+	resp, err := req.Send()
+	if err != nil {
+		return nil, wrapError(err, setConfigError)
+	}
+
+	err = checkResponseOK(resp)
+	if err != nil {
+		return nil, wrapError(err, setConfigError)
+	}
+
+	stc := new(STConfig)
+	err = resp.JSON(stc)
+	if err != nil {
+		return nil, wrapError(err, setConfigError)
 	}
 
 	return stc, nil

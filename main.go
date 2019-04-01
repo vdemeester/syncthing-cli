@@ -67,6 +67,24 @@ func main() {
 	deviceList := device.Command("list", "List devices.").Alias("l").Alias("ls")
 	deviceStats := device.Command("stats", "Show device stats.").Alias("s").Alias("st")
 
+	deviceAdd := device.Command("add", "Add a new device.").Alias("a")
+	deviceAddID := deviceAdd.Arg("ID", "ID of the new device.").Required().String()
+	deviceAddName := deviceAdd.Arg("name", "Name of the new device.").String()
+	deviceAddAddresses := deviceAdd.Flag("addresses", "Addresses of the new device.").
+		Default(constants.DynamicAddress).
+		Strings()
+	deviceAddIntroducer := deviceAdd.Flag("introducer", "Mark device as an introducer.").
+		Short('i').
+		Bool()
+	deviceAddCompression := deviceAdd.Flag("compression", "Specify the compression to use.").
+		Default(constants.CompressionMetadataOnly).
+		Enum(
+			constants.CompressionMetadataOnly,
+			constants.CompressionAllData,
+			constants.CompressionOff,
+		)
+	deviceAddCertName := deviceAdd.Flag("cert-name", "Specify the certificate name.").String()
+
 	folder := app.Command("folder", "Work with folders.").Alias("f").Alias("fl").Alias("fold")
 	folderList := folder.Command("list", "List folders.").Alias("l").Alias("ls")
 	folderStats := folder.Command("stats", "Show folder stats.").Alias("s").Alias("st")
@@ -100,6 +118,16 @@ func main() {
 			return commands.DeviceList(cfg)
 		case deviceStats.FullCommand():
 			return commands.DeviceStats(cfg)
+		case deviceAdd.FullCommand():
+			return commands.DeviceAdd(
+				cfg,
+				*deviceAddID,
+				*deviceAddName,
+				*deviceAddCompression,
+				*deviceAddCertName,
+				*deviceAddAddresses,
+				*deviceAddIntroducer,
+			)
 		case folderList.FullCommand():
 			return commands.FolderList(cfg)
 		case folderStats.FullCommand():
