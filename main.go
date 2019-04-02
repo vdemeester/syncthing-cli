@@ -85,12 +85,15 @@ func main() {
 		)
 	deviceAddCertName := deviceAdd.Flag("cert-name", "Specify the certificate name.").String()
 
-	deviceRemove := device.Command("remove", "Remove a device.").Alias("r")
+	deviceRemove := device.Command("remove", "Remove a device.").Alias("r").Alias("rm")
 	deviceRemoveID := deviceRemove.Arg("ID", "ID of the device to remove.").Required().String()
 
 	folder := app.Command("folder", "Work with folders.").Alias("f").Alias("fl").Alias("fold")
 	folderList := folder.Command("list", "List folders.").Alias("l").Alias("ls")
 	folderStats := folder.Command("stats", "Show folder stats.").Alias("s").Alias("st")
+
+	folderRemove := folder.Command("remove", "Remove a folder.").Alias("r").Alias("rm")
+	folderRemoveID := folderRemove.Arg("ID", "ID of the folder to remove.").Required().String()
 
 	restart := app.Command("restart", "Restart the Syncthing daemon.")
 	shutdown := app.Command("shutdown", "Shutdown the Syncthing daemon.")
@@ -137,6 +140,8 @@ func main() {
 			return commands.FolderList(cfg)
 		case folderStats.FullCommand():
 			return commands.FolderStats(cfg)
+		case folderRemove.FullCommand():
+			return commands.FolderRemove(cfg, *folderRemoveID)
 		case restart.FullCommand():
 			return commands.Restart(cfg)
 		case shutdown.FullCommand():

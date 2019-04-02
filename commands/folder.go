@@ -8,6 +8,10 @@ import (
 	"git.dtluna.net/dtluna/syncthing-cli/format"
 )
 
+const (
+	folderNotFoundErrorTemplate = "no folder with ID %q"
+)
+
 func FolderList(cfg *config.Config) error {
 	stconfig, err := api.GetConfig(cfg)
 	if err != nil {
@@ -27,5 +31,33 @@ func FolderStats(cfg *config.Config) error {
 	for name, folderStats := range *stats {
 		fmt.Printf("%v: %v\n", name, api.Indent(folderStats.String(), 2))
 	}
+	return nil
+}
+
+func removeFolder(folders []api.Folder, folderID string) ([]api.Folder, error) {
+	for i, folder := range folders {
+		if folder.ID == folderID {
+			return append(folders[:i], folders[i+1:]...), nil
+		}
+	}
+	return nil, fmt.Errorf(folderNotFoundErrorTemplate, folderID)
+}
+
+func FolderRemove(cfg *config.Config, folderID string) error {
+	stconfig, err := api.GetConfig(cfg)
+	if err != nil {
+		return err
+	}
+
+	stconfig.Folders, err = removeFolder(stconfig.Folders, folderID)
+	if err != nil {
+		return err
+	}
+
+	_, err = api.SetConfig(cfg, stconfig)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
