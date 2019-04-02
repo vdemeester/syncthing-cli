@@ -8,6 +8,10 @@ import (
 	"git.dtluna.net/dtluna/syncthing-cli/format"
 )
 
+const (
+	deviceNotFoundErrorTemplate = "no device with ID %q"
+)
+
 func DeviceList(cfg *config.Config) error {
 	stconfig, err := api.GetConfig(cfg)
 	if err != nil {
@@ -51,11 +55,38 @@ func DeviceAdd(
 
 	stconfig.Devices = append(stconfig.Devices, newDevice)
 
-	stconfig, err = api.SetConfig(cfg, stconfig)
+	_, err = api.SetConfig(cfg, stconfig)
 	if err != nil {
 		return err
 	}
-	fmt.Println(stconfig)
+
+	return nil
+}
+
+func removeDevice(devices []api.Device, deviceID string) ([]api.Device, error) {
+	for i, device := range devices {
+		if device.DeviceID == deviceID {
+			return append(devices[:i], devices[i+1:]...), nil
+		}
+	}
+	return nil, fmt.Errorf(deviceNotFoundErrorTemplate, deviceID)
+}
+
+func DeviceRemove(cfg *config.Config, deviceID string) error {
+	stconfig, err := api.GetConfig(cfg)
+	if err != nil {
+		return err
+	}
+
+	stconfig.Devices, err = removeDevice(stconfig.Devices, deviceID)
+	if err != nil {
+		return err
+	}
+
+	_, err = api.SetConfig(cfg, stconfig)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

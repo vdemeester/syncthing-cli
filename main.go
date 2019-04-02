@@ -85,6 +85,9 @@ func main() {
 		)
 	deviceAddCertName := deviceAdd.Flag("cert-name", "Specify the certificate name.").String()
 
+	deviceRemove := device.Command("remove", "Remove a device.").Alias("r")
+	deviceRemoveID := deviceRemove.Arg("ID", "ID of the device to remove.").Required().String()
+
 	folder := app.Command("folder", "Work with folders.").Alias("f").Alias("fl").Alias("fold")
 	folderList := folder.Command("list", "List folders.").Alias("l").Alias("ls")
 	folderStats := folder.Command("stats", "Show folder stats.").Alias("s").Alias("st")
@@ -128,6 +131,8 @@ func main() {
 				*deviceAddAddresses,
 				*deviceAddIntroducer,
 			)
+		case deviceRemove.FullCommand():
+			return commands.DeviceRemove(cfg, *deviceRemoveID)
 		case folderList.FullCommand():
 			return commands.FolderList(cfg)
 		case folderStats.FullCommand():
