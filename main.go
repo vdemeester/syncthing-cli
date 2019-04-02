@@ -16,7 +16,8 @@ import (
 
 var (
 	commit  = ""
-	version = fmt.Sprintf("dev-%s", commit)
+	version = ""
+	date    = ""
 )
 
 func printToStderr(v interface{}) {
@@ -49,7 +50,7 @@ func main() {
 	}
 
 	app := kingpin.New(constants.AppName, "CLI client for Syncthing")
-	app.Version(version)
+	app.Version(fmt.Sprintf("%s, commit %s, built at %s", version, commit, date))
 
 	configPath := app.Flag("config", "Location of the config file.").
 		Short('c').
