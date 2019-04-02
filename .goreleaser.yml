@@ -6,10 +6,6 @@ builds:
       - windows
       - linux
       - darwin
-      - freebsd
-      - openbsd
-      - netbsd
-      - plan9
     env:
       - CGO_ENABLED=0
 archive:

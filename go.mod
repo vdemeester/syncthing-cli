@@ -8,7 +8,8 @@ require (
 	github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc // indirect
 	github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf // indirect
 	github.com/hashicorp/errwrap v1.0.0
-	github.com/stretchr/testify v1.2.2
+	github.com/nbio/st v0.0.0-20140626010706-e9e8d9816f32 // indirect
+	github.com/stretchr/testify v1.3.0
 	golang.org/x/net v0.0.0-20190327214358-63eda1eb0650 // indirect
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 	gopkg.in/h2non/gentleman.v2 v2.0.3

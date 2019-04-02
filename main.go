@@ -14,6 +14,11 @@ import (
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
+var (
+	commit  = ""
+	version = fmt.Sprintf("dev-%s", commit)
+)
+
 func printToStderr(v interface{}) {
 	fmt.Fprintf(
 		os.Stderr,
@@ -44,7 +49,7 @@ func main() {
 	}
 
 	app := kingpin.New(constants.AppName, "CLI client for Syncthing")
-	app.Version(constants.Version)
+	app.Version(version)
 
 	configPath := app.Flag("config", "Location of the config file.").
 		Short('c').
