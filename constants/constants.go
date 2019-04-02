@@ -10,4 +10,15 @@ const (
 	CompressionMetadataOnly = "metadata"
 	CompressionAllData      = "always"
 	CompressionOff          = "never"
+
+	FolderTypeSendReceive = "sendreceive"
+	FolderTypeSendOnly    = "sendonly"
+	FolderTypeReceiveOnly = "receiveonly"
+
+	FilePullOrderRandom        = "random"
+	FilePullOrderAlphabetic    = "alphabetic"
+	FilePullOrderSmallestFirst = "smallestFirst"
+	FilePullOrderLargestFirst  = "largestFirst"
+	FilePullOrderOldestFirst   = "oldestFirst"
+	FilePullOrderNewestFirst   = "newestFirst"
 )

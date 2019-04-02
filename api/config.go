@@ -89,21 +89,26 @@ Params: %v`,
 }
 
 type Folder struct {
-	ID                    string
-	Label                 string
-	Path                  string
-	Type                  string
-	Devices               []FolderDevice
-	RescanIntervalS       int
-	IgnorePerms           bool
-	AutoNormalize         bool
-	MinDiskFreePct        int
-	Versioning            VersioningInfo
-	Copiers               int
-	Pullers               int
-	Hashers               int
-	Order                 string
-	IgnoreDelete          bool
+	ID      string
+	Label   string
+	Path    string
+	Type    string
+	Devices []FolderDevice
+
+	RescanIntervalS  int
+	FSWatcherEnabled bool
+	Order            string
+	IgnorePerms      bool
+	IgnoreDelete     bool
+	MinDiskFreePct   int
+	MinDiskFree      string
+	Versioning       VersioningInfo
+	AutoNormalize    bool
+
+	Copiers int
+	Pullers int
+	Hashers int
+
 	ScanProgressIntervalS int
 	PullerSleepS          int
 	PullerPauseS          int

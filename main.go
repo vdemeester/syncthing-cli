@@ -92,6 +92,58 @@ func main() {
 	folderList := folder.Command("list", "List folders.").Alias("l").Alias("ls")
 	folderStats := folder.Command("stats", "Show folder stats.").Alias("s").Alias("st")
 
+	folderAdd := folder.Command("add", "Add a new folder.").Alias("a")
+	folderAddLabel := folderAdd.Arg("label", "Label of the new folder.").Required().String()
+	folderAddPath := folderAdd.Arg("path", "Path to the new folder.").Required().ExistingDir()
+	folderAddID := folderAdd.Flag("id", "ID of the new folder.").Short('i').String()
+	folderAddType := folderAdd.Flag("type", "Type of the new folder.").
+		Default(constants.FolderTypeSendReceive).
+		Enum(
+			constants.FolderTypeSendReceive,
+			constants.FolderTypeSendOnly,
+			constants.FolderTypeReceiveOnly,
+		)
+	folderAddShareWith := folderAdd.Flag("share", "IDs of devices to share this folder with.").
+		Short('s').
+		Strings()
+	folderAddOrder := folderAdd.Flag("order", "File pull order.").
+		Short('o').
+		Default(constants.FilePullOrderRandom).
+		Enum(
+			constants.FilePullOrderRandom,
+			constants.FilePullOrderAlphabetic,
+			constants.FilePullOrderSmallestFirst,
+			constants.FilePullOrderLargestFirst,
+			constants.FilePullOrderOldestFirst,
+			constants.FilePullOrderNewestFirst,
+		)
+	folderAddMinDiskFreePct := folderAdd.Flag("min-free-space", "Minimum free disk space in percents.").
+		Short('m').
+		Int()
+	folderAddFSWatcherEnabled := folderAdd.Flag(
+		"fs-watcher-enabled",
+		"Watch for changes. Watching for changes discovers most changes without periodic scanning.",
+	).
+		Short('w').
+		Bool()
+	folderAddIgnorePerms := folderAdd.Flag(
+		"ignore-perms",
+		"File permission bits are ignored when looking for changes. Use on FAT file systems.",
+	).
+		Bool()
+	folderAddIgnoreDelete := folderAdd.Flag(
+		"ignore-delete",
+		"When set to true, this device will pretend not to see instructions to delete files from other devices.",
+	).
+		Bool()
+	folderAddRescanInterval := folderAdd.Flag(
+		"rescan-interval",
+		"Full folder rescan interval in seconds.",
+	).
+		Short('r').
+		Default("3600").
+		Int()
+
 	folderRemove := folder.Command("remove", "Remove a folder.").Alias("r").Alias("rm")
 	folderRemoveID := folderRemove.Arg("ID", "ID of the folder to remove.").Required().String()
 
@@ -140,6 +192,21 @@ func main() {
 			return commands.FolderList(cfg)
 		case folderStats.FullCommand():
 			return commands.FolderStats(cfg)
+		case folderAdd.FullCommand():
+			return commands.FolderAdd(
+				cfg,
+				*folderAddLabel,
+				*folderAddID,
+				*folderAddPath,
+				*folderAddType,
+				*folderAddOrder,
+				*folderAddShareWith,
+				*folderAddMinDiskFreePct,
+				*folderAddRescanInterval,
+				*folderAddFSWatcherEnabled,
+				*folderAddIgnorePerms,
+				*folderAddIgnoreDelete,
+			)
 		case folderRemove.FullCommand():
 			return commands.FolderRemove(cfg, *folderRemoveID)
 		case restart.FullCommand():

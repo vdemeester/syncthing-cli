@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"path"
 
 	"git.dtluna.net/dtluna/syncthing-cli/api"
 	"git.dtluna.net/dtluna/syncthing-cli/config"
@@ -59,5 +60,38 @@ func FolderRemove(cfg *config.Config, folderID string) error {
 		return err
 	}
 
+	return nil
+}
+
+func FolderAdd(
+	cfg *config.Config,
+	label, ID, folderPath, folderType, order string,
+	shareWith []string,
+	minDiskFreePct, rescanIntervalS int,
+	fsWatcherEnabled, ignorePerms, ignoreDelete bool,
+) error {
+	if ID == "" {
+		ID = path.Base(folderPath)
+	}
+
+	folderDevices := []api.FolderDevice{}
+	for _, deviceID := range shareWith {
+		folderDevices = append(folderDevices, api.FolderDevice{DeviceID: deviceID})
+	}
+
+	newFolder := api.Folder{
+		ID:               ID,
+		Label:            label,
+		Path:             folderPath,
+		Type:             folderType,
+		Order:            order,
+		IgnorePerms:      ignorePerms,
+		Devices:          folderDevices,
+		MinDiskFreePct:   minDiskFreePct,
+		RescanIntervalS:  rescanIntervalS,
+		FSWatcherEnabled: fsWatcherEnabled,
+		IgnoreDelete:     ignoreDelete,
+	}
+	fmt.Println(newFolder)
 	return nil
 }
