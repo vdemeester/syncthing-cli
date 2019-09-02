@@ -1,16 +1,24 @@
-# This is an example goreleaser.yaml file with some sane defaults.
-# Make sure to check the documentation at http://goreleaser.com
-builds:
-  -
-    goos:
-      - windows
-      - linux
-      - darwin
-    env:
-      - CGO_ENABLED=0
-archive:
-  format: zip
-  replacements:
+project_name: syncthing-cli
+build:
+  goarch:
+    - 386
+    - amd64
+    - arm
+    - arm64
+  goos:
+    - windows
+    - linux
+    - darwin
+    # TODO: Enable these when xdg gets a new release
+    # - openbsd
+    # - freebsd
+archives:
+- replacements:
+    openbsd: OpenBSD
+    freebsd: FreeBSD
+    darwin: Darwin
+    linux: Linux
+    windows: Windows
     386: i386
     amd64: x86_64
 checksum:
@@ -23,17 +31,11 @@ changelog:
     exclude:
     - '^docs:'
     - '^test:'
-
 release:
-  # Fuck Github
-  disable: true
-
-# nfpm:
-#   license: Unlicense
-#   homepage: https://git.dtluna.net/dtluna/syncthing-cli
-#   description: CLI client for Syncthing in Go
-#   vendor: dtluna
-#   maintainer: dtluna <dtluna@waifu.club>
-#   formats:
-#     - deb
-#     - rpm
+  gitea:
+    owner: dtluna
+    name: syncthing-cli
+gitea_urls:
+  api: https://git.dtluna.net/api/v1/
+env_files:
+  gitea_token: ~/.config/goreleaser/gitea_token
