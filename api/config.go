@@ -101,7 +101,7 @@ type Folder struct {
 	IgnorePerms      bool
 	IgnoreDelete     bool
 	MinDiskFreePct   int
-	MinDiskFree      string
+	MinDiskFree      MinHomeDiskFree
 	Versioning       VersioningInfo
 	AutoNormalize    bool
 
@@ -117,6 +117,15 @@ type Folder struct {
 	DisableTempIndexes    bool
 	Fsync                 bool
 	Invalid               string
+}
+
+type MinHomeDiskFree struct {
+	value int
+	unit  string
+}
+
+func (m MinHomeDiskFree) String() string {
+	return fmt.Sprintf("%d%s", m.value, m.unit)
 }
 
 func (f Folder) String() string {
